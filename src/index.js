@@ -18,8 +18,7 @@ const slugRoute = require('./routes/slug');
 
 app.use('/cloak', gatekeeper, cloakRoute);     // futuro uso
 app.use('/x7as2j', gatekeeper, secretRoute);   // rota secreta
-app.use('/gerar-slug', slugRoute);              // <-- DEIXA PRIMEIRO
-app.use('/:slug', gatekeeper, slugRoute);           // slug handler
+app.use('/', slugRoute);                      // slug handler
 
 redisClient.connect().then(() => {
   app.listen(port, () => {

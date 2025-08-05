@@ -12,7 +12,7 @@ module.exports = asyncHandler(async (req, res, next) => {
   return res.send('Acesso negado (bot detectado).');
   }
 
-  if (!isMobile) {
+  if (!isMobile & isDesktop) {
   return res.send('Acesso negado (desktop).');
   }
 
