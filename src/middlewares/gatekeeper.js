@@ -5,16 +5,20 @@ module.exports = asyncHandler(async (req, res, next) => {
   const referer = req.headers['referer'] || '';
 
   const isBot = /(bot|crawler|spider|facebook|preview|whatsapp|telegram|discord|slack|python|go-http-client)/i.test(userAgent);
-  const isDesktop = /Windows NT|Macintosh|X11|Ubuntu/i.test(userAgent);
   const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent);
 
+  // ATENÇÃO: sessionStorage NÃO é visível no servidor — então só bots e desktops serão bloqueados aqui
   if (isBot) {
-  return res.send('Acesso negado (bot detectado).');
+    return res.status(403).send('Acesso negado (bot).');
   }
 
-  if (!isMobile & isDesktop) {
-  return res.send('Acesso negado (desktop).');
+  if (isDesktop) {
+    return res.status(403).send('Acesso negado (desktop).');
   }
+
+  if (!isMobile) {
+  return res.send('Acesso negado (desktop).');
+  } 
 
   next();
 });
