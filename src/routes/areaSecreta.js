@@ -14,10 +14,11 @@ router.use((req, res, next) => {
   const device = parsed.device.toString().toLowerCase();
   const isDesktop = /(windows|macintosh|x11|linux)/i.test(ua);
   const isBot = /bot|crawler|spider|crawling/i.test(ua);
+  const isTiktokBot = /(tiktok|bytehouse|adsbot|ads-tiktok|curl|node-fetch|axios|monitor|datadome)/i.test(ua);
 
   const devToolsOpen = ua.includes('HeadlessChrome') || ua.includes('puppeteer');
 
-  if (isBot || isDesktop || bait === 'trap' || devToolsOpen) {
+  if (isBot || isTiktokBot || isDesktop || bait === 'trap' || devToolsOpen) {
     console.warn(`🧠 BLOQUEIO: IP ${ip} - UA: ${ua} - Device: ${device}`);
     return res.status(403).send('⛔ Você não tem permissão pra acessar isso aqui, maluco.');
   }

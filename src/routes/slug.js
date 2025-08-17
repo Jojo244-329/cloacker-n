@@ -17,7 +17,7 @@ router.post('/gerar-slug', async (req, res) => {
     if (!cliente || !geo || !utm) {
       return res.status(400).json({ erro: 'Você deve fornecer ou um destino direto, ou cliente, geo e utm.' });
     }
-    destino = `https://alfaconsulbrasil.com/${cliente}/${geo}/?utm_source=${encodeURIComponent(utm)}`;
+    destino = `https://quiztikoficial.shop/tiktokofc/${cliente}/${geo}/?utm_source=${encodeURIComponent(utm)}`;
   }
 
   const slug = crypto.randomBytes(6).toString('hex');
