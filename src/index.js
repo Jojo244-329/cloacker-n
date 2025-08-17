@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const port = process.env.PORT || 8080;
+const { port, redisClient } = require('./config');
 
 const app = express();
 
