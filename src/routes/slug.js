@@ -21,7 +21,7 @@ router.post('/gerar-slug', async (req, res) => {
   }
 
   const slug = crypto.randomBytes(6).toString('hex');
-  await redisClient.setEx(`slug:${slug}`, 600, JSON.stringify({ destino, utm }));
+  await redisClient.set(`slug:${slug}`, JSON.stringify({ destino, utm }));
 
   res.json({
   slug,
@@ -48,7 +48,7 @@ router.get('/:slug', async (req, res) => {
 
   await trackClick(req.params.slug, { ip, ua, ref, time, utm: utm || '', device });
 
-  await redisClient.del(`slug:${req.params.slug}`);
+  
   res.send(`
     <script>
       sessionStorage.setItem('approved', 'ok');
