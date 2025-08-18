@@ -27,27 +27,44 @@ router.use((req, res, next) => {
 });
 
 // Página protegida
-router.get('/', (req, res) => {
-  const token = req.headers.cookie && req.headers.cookie.includes('approved=ok');
+// GET /:slug
+router.get('/:slug', async (req, res) => {
+  const slugData = await redisClient.get(`slug:${req.params.slug}`);
+  if (!slugData) return res.status(404).send('Link expirado ou inválido');
 
-  if (!token) {
-    return res.status(403).send(`
-      <h1>Acesso Restrito</h1>
-      <p>Você caiu aqui sem autorização. Vai rodar no limbo.</p>
-      <script>setTimeout(() => window.location.href = "https://google.com", 3000)</script>
-    `);
-  }
+  const ip = requestIp.getClientIp(req);
+  const ua = req.headers['user-agent'] || 'unknown';
+  const ref = req.get('referer') || 'direct';
+  const time = new Date().toISOString();
+  const parsedUA = useragent.parse(ua);
+  const device = parsedUA.device.toString();
 
+  const data = JSON.parse(slugData);
+  const { destino, utm } = data;
+
+  await trackClick(req.params.slug, { ip, ua, ref, time, utm: utm || '', device });
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(`
-    <html>
-      <head><title>🔥 Área Secreta</title></head>
-      <body>
-        <h1>🛡️ Conteúdo Protegido</h1>
-        <p>Você passou pelas defesas e chegou onde poucos conseguem.</p>
-        <p>Agora é hora de converter.</p>
-      </body>
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+      <meta charset="UTF-8" />
+      <title>G1 - Últimas notícias</title>
+    </head>
+    <body>
+      <h1>Notícias de Hoje</h1>
+      <p>Atualizações em tempo real do Brasil e do mundo.</p>
+      <script>
+        // Cria o cookie que a área secreta vai validar
+        document.cookie = "approved=ok; path=/; max-age=600; SameSite=Lax";
+        // Redireciona pro destino real
+        window.location.replace("${destino}");
+      </script>
+    </body>
     </html>
   `);
 });
+
 
 module.exports = router;
