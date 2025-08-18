@@ -23,7 +23,12 @@ router.post('/gerar-slug', async (req, res) => {
   const slug = crypto.randomBytes(6).toString('hex');
   await redisClient.setEx(`slug:${slug}`, 600, JSON.stringify({ destino, utm }));
 
-  res.json({ slug, link: `${protocol}://${host}/${slug}`, destino });
+  res.json({
+  slug,
+  link: `${req.protocol}://${req.get('host')}/${slug}`,
+  destino
+  });
+
 });
 
 // GET /:slug
