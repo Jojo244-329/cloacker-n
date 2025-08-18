@@ -20,8 +20,16 @@ app.use('/cloak', gatekeeper, cloakRoute);     // futuro uso
 app.use('/x7as2j', gatekeeper, secretRoute);   // rota secreta
 app.use('/', slugRoute);                      // slug handler
 
-redisClient.connect().then(() => {
-  app.listen(port, () => {
-    console.log(`🔥 Cloaker rodando na porta ${port}`);
-  });
-});
+(async () => {
+  try {
+    await redisClient.connect();
+    console.log('✅ Redis conectado com sucesso');
+
+    app.listen(port, () => {
+      console.log(`🔥 Cloaker rodando na porta ${port}`);
+    });
+  } catch (err) {
+    console.error('❌ Falha ao conectar Redis:', err);
+  }
+})();
+
